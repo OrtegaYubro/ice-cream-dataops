@@ -26,6 +26,12 @@ variables:
         icapi_trigger_client_secret: ${ICAPI_EXTRACTORS_CLIENT_SECRET}
         icapi_extractors_client_id: ${ICAPI_EXTRACTORS_CLIENT_ID}
         icapi_extractors_client_secret: ${ICAPI_EXTRACTORS_CLIENT_SECRET}
+      
+      # Variables para las transformaciones y schedules
+        source_name: icapi
+        location_name: Oslo
+        scheduleHourly: "0 * * * *"
+        pause_transformations: false
 
       use_cases:
         oee:
