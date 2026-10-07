@@ -69,6 +69,7 @@ def get_time_series_for_site(client: CogniteClient, site, space):
 
     return time_series
 
+
 def handle(client: CogniteClient, data: Dict[str, Any] = {}) -> None:
     lookback_minutes = None
     sites = None
@@ -99,11 +100,15 @@ def handle(client: CogniteClient, data: Dict[str, Any] = {}) -> None:
         for f in futures:
             f.result()
 
+
 def process_site(client, lookback_minutes, site):
     oee_space = "oee_ts_space"
     source_space = "icapi_dm_space"
 
     timeseries = get_time_series_for_site(client, site, source_space)
+    if not timeseries:
+        return
+
     asset_eids = list(set([item.external_id.split(sep=":")[0] for item in timeseries]))
     instance_ids = [NodeId(space=source_space, external_id=ts.external_id) for ts in timeseries]
     all_latest_dps = client.time_series.data.retrieve_latest(instance_id=instance_ids)
@@ -121,13 +126,29 @@ def process_site(client, lookback_minutes, site):
         status_node = f"NodeId({source_space}, {asset}:status)"
         planned_status_node = f"NodeId({source_space}, {asset}:planned_status)"
 
-        end = min([dp.timestamp[0] for dp in latest_dps if latest_dps and dp.timestamp], default=None)
+        # Extraer timestamps de forma segura soportando diferentes tipos (datetime, int, list)
+        timestamps = []
+        for dp in latest_dps:
+            if not dp:
+                continue
+            ts = getattr(dp, "timestamp", None)
+            if ts is None:
+                continue
+            if isinstance(ts, (list, tuple)):
+                ts = ts[0] if len(ts) > 0 else None
+            if ts is None:
+                continue
+            if hasattr(ts, "timestamp"):  # Si es objeto datetime
+                ts = int(ts.timestamp() * 1000)
+            timestamps.append(ts)
+
+        end = min(timestamps, default=None)
 
         if end:
             dps_df = client.time_series.data.retrieve_dataframe(
                 instance_id=[dp.instance_id for dp in latest_dps],
-                start=end - lookback_minutes,
-                end=end,
+                start=int(end - lookback_minutes),
+                end=int(end),
                 aggregates=["sum"],
                 granularity="1m",
                 include_aggregate_name=False,
