@@ -88,10 +88,15 @@ jobs:
           find build -type f \( -name "*function*.yaml" -o -name "*function*.yml" \) -delete 2>/dev/null || true
           find build -type d -name "functions" -exec rm -rf {} + 2>/dev/null || true
 
-          # 5. Eliminar hosted extractors y extractor sources
+          # 5. Eliminar hosted extractors y fuentes
           find build -type f \( -name "*hosted_extractor*.yaml" -o -name "*hosted_extractor*.yml" -o -name "*extractor_source*.yaml" -o -name "*extractor_source*.yml" \) -delete 2>/dev/null || true
           find build -type d -name "hosted_extractors" -exec rm -rf {} + 2>/dev/null || true
           find build -type d -name "extractor_sources" -exec rm -rf {} + 2>/dev/null || true
+
+          # 6. Eliminar bases y tablas RAW
+          find build -type f \( -name "*raw*.yaml" -o -name "*raw*.yml" \) -delete 2>/dev/null || true
+          find build -type d -name "raw" -exec rm -rf {} + 2>/dev/null || true
+          find build -type d -name "raw_databases" -exec rm -rf {} + 2>/dev/null || true
 
       - name: Deploy Toolkit Configurations
         run: cdf deploy --env=${{ matrix.environment }}
