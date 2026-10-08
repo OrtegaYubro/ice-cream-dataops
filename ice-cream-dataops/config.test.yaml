@@ -8,6 +8,11 @@ environment:
     - modules/bootcamp/use_cases/oee
 
 variables:
+  pause_transformations: false
+  scheduleHourly: "0 * * * *"
+  ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
+  DATA_PIPELINE_OEE_SOURCE_ID: ${DATA_PIPELINE_OEE_SOURCE_ID}
+
   modules:
     bootcamp:
       # Variables shared by modules
