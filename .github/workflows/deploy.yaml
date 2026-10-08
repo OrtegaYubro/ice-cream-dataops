@@ -69,4 +69,4 @@ jobs:
         run: cdf build --env=${{ matrix.environment }}
 
       - name: Deploy Toolkit Configurations
-        run: cdf deploy --env=${{ matrix.environment }}
+        run: cdf deploy --env=${{ matrix.environment }} --skip=groups
