@@ -53,9 +53,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Clean residual environment files
+        run: |
+          rm -f .env .env.* ice-cream-dataops/.env /root/.env /tmp/.env 2>/dev/null || true
+
       - name: Verify and Update Toolkit Authorization
         run: yes | cdf auth verify
+
       - name: Build Toolkit Configurations
         run: cdf build --env=${{ matrix.environment }}
+
       - name: Deploy Toolkit Configurations
         run: cdf deploy --env=${{ matrix.environment }}
