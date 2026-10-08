@@ -22,23 +22,20 @@ jobs:
     name: Build & Deploy
     runs-on: ubuntu-latest
     container:
-      image: cognite/toolkit:0.6.53  
-    strategy:
-      matrix:
-        include:
-          # Deploy to 'test' environment automatically, only on push to main branch
-          - environment: ${{ inputs.environment != '' && inputs.environment || 'test' }}
-
-    environment: ${{ matrix.environment }}
+      image: cognite/toolkit:0.6.53
+    
+    # Determina el ambiente correctamente
+    environment: ${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
+    
     env:
       # Cognite Toolkit environment variables
-      CDF_PROJECT: cdf-bootcamp-15-${{ matrix.environment }}
+      CDF_PROJECT: cdf-bootcamp-15-${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
       CDF_CLUSTER: westeurope-1
       IDP_TENANT_ID: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
       IDP_TOKEN_URL: https://login.microsoftonline.com/16e3985b-ebe8-4e24-9da4-933e21a9fc81/oauth2/v2.0/token
       LOGIN_FLOW: client_credentials
 
-      IDP_CLIENT_ID: ${{ vars.IDP_CLIENT_ID }}
+      IDP_CLIENT_ID: ${{ secrets.IDP_CLIENT_ID }}
       IDP_CLIENT_SECRET: ${{ secrets.IDP_CLIENT_SECRET }}
 
       # This project's environment variables
@@ -57,6 +54,6 @@ jobs:
       - name: Verify and Update Toolkit Authorization
         run: yes | cdf auth verify
       - name: Build Toolkit Configurations
-        run: cdf build --env=${{ matrix.environment }}
+        run: cdf build --env=${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
       - name: Deploy Toolkit Configurations
-        run: cdf deploy --env=${{ matrix.environment }}
+        run: cdf deploy --env=${{ github.event_name == 'workflow_dispatch' && inputs.environment || 'test' }}
