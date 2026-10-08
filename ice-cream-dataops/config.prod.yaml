@@ -1,7 +1,7 @@
 environment:
-  name: prod # prod, staging, dev, test, qa
+  name: prod
   project: cdf-bootcamp-15-prod
-  validation-type: prod # prod, staging, dev, test, qa
+  validation-type: prod
   selected:
     - modules/bootcamp/data_foundation
     - modules/bootcamp/ice_cream_api
@@ -11,22 +11,13 @@ variables:
   modules:
     bootcamp:
       # Variables shared by modules
-      pause_transformations: false
-      scheduleHourly: "0 * * * *"
       icapi_ds_external_id: ds_icapi
       icapi_space_name: icapi_dm_space
-      ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
-      icapi_extractors_source_id: ${ICAPI_EXTRACTORS_SOURCE_ID}
-      DATA_PIPELINE_OEE_SOURCE_ID: ${DATA_PIPELINE_OEE_SOURCE_ID}
-      data_pipeline_oee_source_id: ${DATA_PIPELINE_OEE_SOURCE_ID}          
 
       data_foundation:
         data_developer_source_id: ${DATA_DEVELOPER_SOURCE_ID}
 
       ice_cream_api:
-        pause_transformations: false
-        scheduleHourly: "0 * * * *"
-        ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
         icapi_extractors_source_id: ${ICAPI_EXTRACTORS_SOURCE_ID}
         tokenUri: ${IDP_TOKEN_URL}
         cdfProjectName: ${CDF_PROJECT}
@@ -38,8 +29,7 @@ variables:
 
       use_cases:
         oee:
-          DATA_PIPELINE_OEE_SOURCE_ID: ${DATA_PIPELINE_OEE_SOURCE_ID}
-          data_pipeline_oee_source_id: ${DATA_PIPELINE_OEE_SOURCE_ID}          
+          data_pipeline_oee_source_id: ${DATA_PIPELINE_OEE_SOURCE_ID}
           uc_oee_ds_external_id: ds_uc_oee
           oee_space_name: oee_ts_space
           data_pipeline_oee_client_id: ${DATA_PIPELINE_OEE_CLIENT_ID}
