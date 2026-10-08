@@ -60,56 +60,15 @@ jobs:
 
       - name: Verify and Update Toolkit Authorization
         run: |
-          # 1. Eliminar cualquier archivo .env residual en el workspace
-          find . -name "*.env*" -not -path "*/.*" -delete 2>/dev/null || true
-          rm -f .env .env.* ice-cream-dataops/.env 2>/dev/null || true
+          # 1. Encontrar y destruir TODOS los archivos .env en todo el sistema de archivos del contenedor
+          find / -name ".env*" -not -path "/proc/*" -not -path "/sys/*" -delete 2>/dev/null || true
 
-          # 2. Diagnóstico directo de autenticación y proyectos usando Python
-          python3 - << 'EOF'
-          import os, json, urllib.request, urllib.parse
+          # 2. Crear un .env vacío e inmutable en el directorio actual para que cdf no lo genere ni lea otro
+          touch .env
+          chmod 444 .env
 
-          token_url = os.environ.get("IDP_TOKEN_URL")
-          client_id = os.environ.get("IDP_CLIENT_ID")
-          client_secret = os.environ.get("IDP_CLIENT_SECRET")
-          cluster = os.environ.get("CDF_CLUSTER")
-          target_project = os.environ.get("CDF_PROJECT")
-
-          print(f"--> Diagnosticando para proyecto objetivo: {target_project}")
-          print(f"--> Client ID inyectado: {client_id}")
-
-          # Solicitar Token
-          data = urllib.parse.urlencode({
-              "client_id": client_id,
-              "client_secret": client_secret,
-              "scope": f"https://{cluster}.cognitedata.com/.default",
-              "grant_type": "client_credentials"
-          }).encode("utf-8")
-
-          try:
-              req = urllib.request.Request(token_url, data=data, method="POST")
-              with urllib.request.urlopen(req) as resp:
-                  token_res = json.loads(resp.read().decode("utf-8"))
-                  token = token_res.get("access_token")
-                  print("--> Token de Azure AD obtenido exitosamente.")
-          except Exception as e:
-              print(f"--> ERROR al obtener token de Azure: {e}")
-              exit(1)
-
-          # Consultar proyectos visibles en Cognite Data Fusion
-          api_url = f"https://{cluster}.cognitedata.com/api/v1/projects"
-          req_cdf = urllib.request.Request(api_url, headers={"Authorization": f"Bearer {token}"})
-          try:
-              with urllib.request.urlopen(req_cdf) as resp_cdf:
-                  cdf_res = json.loads(resp_cdf.read().decode("utf-8"))
-                  projs = [p.get("urlName") for p in cdf_res.get("items", [])]
-                  print(f"--> PROYECTOS VISIBLES EN CDF SEGÚN ESTE RUNNER: {projs}")
-          except Exception as e:
-              print(f"--> ERROR al consultar proyectos de CDF: {e}")
-          EOF
-
-          echo ""
-          echo "Ejecutando cdf auth verify..."
-          yes | cdf auth verify
+          # 3. Ejecutar cdf indicando explícitamente el entorno y proyecto
+          yes | cdf auth verify --env=${{ matrix.environment }}
 
       - name: Build Toolkit Configurations
         run: cdf build --env=${{ matrix.environment }}
