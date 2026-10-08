@@ -59,8 +59,26 @@ jobs:
           rm -f .env .env.* ice-cream-dataops/.env /root/.env /tmp/.env 2>/dev/null || true
 
       - name: Verify and Update Toolkit Authorization
-        run: yes | cdf auth verify
+        run: |
+          # 1. Eliminar cualquier archivo .env residual en el workspace y en home
+          rm -f .env .env.* ice-cream-dataops/.env /root/.env /tmp/.env 2>/dev/null || true
 
+          # 2. Consultar directamente a la API de Cognite desde el runner usando las variables inyectadas
+          echo "Obteniendo token desde el runner..."
+          TOKEN=$(curl -s -X POST "$IDP_TOKEN_URL" \
+            -d "client_id=$IDP_CLIENT_ID" \
+            -d "client_secret=$IDP_CLIENT_SECRET" \
+            -d "scope=https://$CDF_CLUSTER.cognitedata.com/.default" \
+            -d "grant_type=client_credentials" | sed -n 's/.*"access_token":"\([^"]*\)".*/\1/p')
+
+          echo "Proyectos visibles para el runner según CDF API:"
+          curl -s -H "Authorization: Bearer $TOKEN" \
+            "https://$CDF_CLUSTER.cognitedata.com/api/v1/projects"
+
+          echo ""
+          echo "Ejecutando cdf auth verify sin interferencia de .env..."
+          yes | cdf auth verify
+          
       - name: Build Toolkit Configurations
         run: cdf build --env=${{ matrix.environment }}
 
