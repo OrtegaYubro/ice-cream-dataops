@@ -1,15 +1,17 @@
 name: Deploy Toolkit
+
 on:
   push:
     branches:
       - main
     paths:
-      - ice-cream-dataops/**  # Make sure this matches default_organization_dir in cdf.toml
+      - "ice-cream-dataops/**"
   workflow_dispatch:
     inputs:
       environment:
-        description: Pick one
-        required: false
+        description: "Pick one"
+        required: true
+        default: "test"
         type: choice
         options:
           - test
@@ -20,18 +22,17 @@ jobs:
     name: Build & Deploy
     runs-on: ubuntu-latest
     container:
-      image: cognite/toolkit:0.6.53  # Make sure the toolkit version matches the version in cdf.toml
+      image: cognite/toolkit:0.6.53
+
     strategy:
       matrix:
         include:
-          # Deploy to 'test' environment automatically, only on push to main branch
           - environment: ${{ inputs.environment != '' && inputs.environment || 'test' }}
 
     environment: ${{ matrix.environment }}
-    env:
-      # Cognite Toolkit environment variables
-      CDF_PROJECT: cdf-bootcamp-15-${{ matrix.environment }}
 
+    env:
+      CDF_PROJECT: cdf-bootcamp-15-${{ matrix.environment }}
       CDF_CLUSTER: westeurope-1
       IDP_TENANT_ID: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
       IDP_TOKEN_URL: https://login.microsoftonline.com/16e3985b-ebe8-4e24-9da4-933e21a9fc81/oauth2/v2.0/token
@@ -40,7 +41,6 @@ jobs:
       IDP_CLIENT_ID: ${{ vars.IDP_CLIENT_ID }}
       IDP_CLIENT_SECRET: ${{ secrets.IDP_CLIENT_SECRET }}
 
-      # This project's environment variables
       DATA_DEVELOPER_SOURCE_ID: ${{ vars.DATA_DEVELOPER_SOURCE_ID }}
 
       DATA_PIPELINE_OEE_CLIENT_ID: ${{ vars.DATA_PIPELINE_OEE_CLIENT_ID }}
@@ -51,7 +51,7 @@ jobs:
       ICAPI_EXTRACTORS_CLIENT_SECRET: ${{ secrets.ICAPI_EXTRACTORS_CLIENT_SECRET }}
       ICAPI_EXTRACTORS_SOURCE_ID: ${{ vars.ICAPI_EXTRACTORS_SOURCE_ID }}
 
-steps:
+    steps:
       - uses: actions/checkout@v4
 
       - name: Clean residual environment files
@@ -70,12 +70,9 @@ steps:
 
       - name: Remove unpermitted manifests from build
         run: |
-          # 1. Eliminar grupos
           find build -type f \( -name "*group*.yaml" -o -name "*group*.yml" \) -delete 2>/dev/null || true
           find build -type d -name "groups" -exec rm -rf {} + 2>/dev/null || true
           find build -type d -name "auth" -exec rm -rf {} + 2>/dev/null || true
-
-          # 2. Eliminar datasets
           find build -type f \( -name "*dataset*.yaml" -o -name "*data_set*.yaml" \) -delete 2>/dev/null || true
           find build -type d -name "datasets" -exec rm -rf {} + 2>/dev/null || true
           find build -type d -name "data_sets" -exec rm -rf {} + 2>/dev/null || true
