@@ -84,5 +84,9 @@ jobs:
           find build -type f \( -name "*space*.yaml" -o -name "*space*.yml" \) -delete 2>/dev/null || true
           find build -type d -name "spaces" -exec rm -rf {} + 2>/dev/null || true
 
+          # 4. Eliminar funciones
+          find build -type f \( -name "*function*.yaml" -o -name "*function*.yml" \) -delete 2>/dev/null || true
+          find build -type d -name "functions" -exec rm -rf {} + 2>/dev/null || true
+          
       - name: Deploy Toolkit Configurations
         run: cdf deploy --env=${{ matrix.environment }}
