@@ -4,7 +4,7 @@ environment:
   validation-type: prod # prod, staging, dev, test, qa
   selected:
     - modules/bootcamp/data_foundation
-    #- modules/bootcamp/ice_cream_api
+    - modules/bootcamp/ice_cream_api
     - modules/bootcamp/use_cases/oee
 
 variables:
