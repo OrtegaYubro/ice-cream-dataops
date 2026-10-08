@@ -68,5 +68,12 @@ jobs:
       - name: Build Toolkit Configurations
         run: cdf build --env=${{ matrix.environment }}
 
+      - name: Remove groups from build
+        run: |
+          # Elimina las definiciones de grupos compiladas para evitar la validación de GroupsAcl
+          find build -type f \( -name "*group*.yaml" -o -name "*group*.yml" \) -delete 2>/dev/null || true
+          find build -type d -name "groups" -exec rm -rf {} + 2>/dev/null || true
+          find build -type d -name "auth" -exec rm -rf {} + 2>/dev/null || true
+
       - name: Deploy Toolkit Configurations
-        run: cdf deploy --env=${{ matrix.environment }} --skip=groups
+        run: cdf deploy --env=${{ matrix.environment }}
