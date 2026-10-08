@@ -16,6 +16,8 @@ variables:
   modules:
     bootcamp:
       # Variables shared by modules
+      pause_transformations: false
+      scheduleHourly: "0 * * * *"
       icapi_ds_external_id: ds_icapi
       icapi_space_name: icapi_dm_space
       ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
@@ -25,6 +27,8 @@ variables:
         data_developer_source_id: ${DATA_DEVELOPER_SOURCE_ID}
 
       ice_cream_api:
+        pause_transformations: false
+        scheduleHourly: "0 * * * *"
         icapi_extractors_source_id: ${ICAPI_EXTRACTORS_SOURCE_ID}
         ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
         tokenUri: ${IDP_TOKEN_URL}
