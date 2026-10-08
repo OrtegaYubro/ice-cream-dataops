@@ -51,7 +51,7 @@ jobs:
       ICAPI_EXTRACTORS_CLIENT_SECRET: ${{ secrets.ICAPI_EXTRACTORS_CLIENT_SECRET }}
       ICAPI_EXTRACTORS_SOURCE_ID: ${{ vars.ICAPI_EXTRACTORS_SOURCE_ID }}
 
-    steps:
+steps:
       - uses: actions/checkout@v4
 
       - name: Clean residual environment files
@@ -68,12 +68,17 @@ jobs:
       - name: Build Toolkit Configurations
         run: cdf build --env=${{ matrix.environment }}
 
-      - name: Remove groups from build
+      - name: Remove unpermitted manifests from build
         run: |
-          # Elimina las definiciones de grupos compiladas para evitar la validación de GroupsAcl
+          # 1. Eliminar grupos
           find build -type f \( -name "*group*.yaml" -o -name "*group*.yml" \) -delete 2>/dev/null || true
           find build -type d -name "groups" -exec rm -rf {} + 2>/dev/null || true
           find build -type d -name "auth" -exec rm -rf {} + 2>/dev/null || true
+
+          # 2. Eliminar datasets
+          find build -type f \( -name "*dataset*.yaml" -o -name "*data_set*.yaml" \) -delete 2>/dev/null || true
+          find build -type d -name "datasets" -exec rm -rf {} + 2>/dev/null || true
+          find build -type d -name "data_sets" -exec rm -rf {} + 2>/dev/null || true
 
       - name: Deploy Toolkit Configurations
         run: cdf deploy --env=${{ matrix.environment }}
