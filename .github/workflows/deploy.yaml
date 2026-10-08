@@ -33,7 +33,6 @@ jobs:
     env:
       # Cognite Toolkit environment variables
       CDF_PROJECT: cdf-bootcamp-15-${{ matrix.environment }}
-
       CDF_CLUSTER: westeurope-1
       IDP_TENANT_ID: 16e3985b-ebe8-4e24-9da4-933e21a9fc81
       IDP_TOKEN_URL: https://login.microsoftonline.com/16e3985b-ebe8-4e24-9da4-933e21a9fc81/oauth2/v2.0/token
@@ -43,15 +42,15 @@ jobs:
       IDP_CLIENT_SECRET: ${{ secrets.IDP_CLIENT_SECRET }}
 
       # This project's environment variables
-      data_developer_source_id: ${{ vars.DATA_DEVELOPER_SOURCE_ID }}
+      DATA_DEVELOPER_SOURCE_ID: ${{ vars.DATA_DEVELOPER_SOURCE_ID }}
 
-      data_pipeline_oee_client_id: ${{ vars.DATA_PIPELINE_OEE_CLIENT_ID }}
-      data_pipeline_oee_client_secret: ${{ secrets.DATA_PIPELINE_OEE_CLIENT_SECRET }}
-      data_pipeline_oee_source_id: ${{ vars.DATA_PIPELINE_OEE_SOURCE_ID }}
+      DATA_PIPELINE_OEE_CLIENT_ID: ${{ vars.DATA_PIPELINE_OEE_CLIENT_ID }}
+      DATA_PIPELINE_OEE_CLIENT_SECRET: ${{ secrets.DATA_PIPELINE_OEE_CLIENT_SECRET }}
+      DATA_PIPELINE_OEE_SOURCE_ID: ${{ vars.DATA_PIPELINE_OEE_SOURCE_ID }}
 
-      icapi_extractors_client_id: ${{ vars.ICAPI_EXTRACTORS_CLIENT_ID }}
-      icapi_extractors_client_secret: ${{ secrets.ICAPI_EXTRACTORS_CLIENT_SECRET }}
-      icapi_extractors_source_id: ${{ vars.ICAPI_EXTRACTORS_SOURCE_ID }}
+      ICAPI_EXTRACTORS_CLIENT_ID: ${{ vars.ICAPI_EXTRACTORS_CLIENT_ID }}
+      ICAPI_EXTRACTORS_CLIENT_SECRET: ${{ secrets.ICAPI_EXTRACTORS_CLIENT_SECRET }}
+      ICAPI_EXTRACTORS_SOURCE_ID: ${{ vars.ICAPI_EXTRACTORS_SOURCE_ID }}
 
     steps:
       - uses: actions/checkout@v4
