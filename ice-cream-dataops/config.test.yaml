@@ -18,12 +18,15 @@ variables:
       # Variables shared by modules
       icapi_ds_external_id: ds_icapi
       icapi_space_name: icapi_dm_space
+      ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
+      icapi_extractors_source_id: ${ICAPI_EXTRACTORS_SOURCE_ID}
 
       data_foundation:
         data_developer_source_id: ${DATA_DEVELOPER_SOURCE_ID}
 
       ice_cream_api:
         icapi_extractors_source_id: ${ICAPI_EXTRACTORS_SOURCE_ID}
+        ICAPI_EXTRACTORS_SOURCE_ID: ${ICAPI_EXTRACTORS_SOURCE_ID}
         tokenUri: ${IDP_TOKEN_URL}
         cdfProjectName: ${CDF_PROJECT}
         scopes: ${IDP_SCOPES}
