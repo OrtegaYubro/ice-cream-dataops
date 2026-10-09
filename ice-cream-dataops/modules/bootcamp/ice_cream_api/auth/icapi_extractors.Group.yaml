@@ -1,10 +1,5 @@
-#Property name
 name: icapi_extractors
-
-#Property sourceId
 sourceId: {{ ICAPI_EXTRACTORS_SOURCE_ID }}
-
-#Property capabilities
 capabilities:
   - datasetsAcl:
       actions: [READ]

@@ -1,10 +1,5 @@
-#Property name
 name: data_pipeline_oee
-
-#Property sourceId
 sourceId: {{ DATA_PIPELINE_OEE_SOURCE_ID }}
-
-#Property capabilities
 capabilities:
   - datasetsAcl:
       actions: [READ]
