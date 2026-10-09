@@ -6,7 +6,7 @@ destination:
     externalId: CogniteCore
     version: v1
     destinationType: CogniteTimeSeries
-  #instanceSpace: icapi_dm_space
+  instanceSpace: icapi_dm_space
   type: instances
 ignoreNullFields: true
 #isPublic: true
